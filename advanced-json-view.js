@@ -12,6 +12,15 @@ if (isJson()) {
 }
 
 /**
+ * Only call this when the file is of type json
+ */
+function main() {
+  document.body.innerHTML = constructPrettifiedOutputOfJson();
+  
+  log('Terminated');
+}
+
+/**
  * Log messages
  * @param msg
  */
@@ -46,9 +55,9 @@ function isJson() {
 }
 
 /**
- * Only call this when the file is of type json
+ * @returns {string} - prettified output of the global json data
  */
-function main() {
+function constructPrettifiedOutputOfJson() {
   /**
    * @modifiedBy Huy Pham (@Funnelback)
    * @author Firefox JSONView (http://code.google.com/p/jsonview)
@@ -174,8 +183,6 @@ function main() {
     }
   };
   
-  log('Processing');
-  
   // Sanitize & output -- all magic from JSONView Firefox
   this.jsonFormatter = new JSONFormatter();
   
@@ -209,10 +216,5 @@ function main() {
     outputDoc = this.jsonFormatter.errorPage(e, this.data, this.uri);
   }
   
-  var links = '<link rel="stylesheet" type="text/css" href="'+chrome.extension.getURL("advanced-json-view.css")+'">' +
-    '<script type="text/javascript" src="'+chrome.extension.getURL("default.js")+'"></script>';
-  
-  document.body.innerHTML = links + outputDoc;
-  
-  log('Terminated');
+  return outputDoc;
 }

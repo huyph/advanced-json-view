@@ -1,4 +1,3 @@
-// document.addEventListener('DOMContentLoaded', function() {
 // Click handler for collapsing and expanding objects and arrays
 function collapse(evt) {
   var collapser = evt.target;
