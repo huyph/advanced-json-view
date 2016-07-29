@@ -107,7 +107,12 @@ document
   .addEventListener('click', function() {
     clearPathToProperty();
 
-    var path = document.getElementById('pathToProperty').value.trim().split('.');
+    var str = document.getElementById('pathToProperty').value.trim();
+    if (str === '') {
+      return;
+    }
+    
+    var path = str.split('.');
     
     var tempPath = '';
     for (var i = 0; i < path.length; i++) {
