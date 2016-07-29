@@ -20,8 +20,8 @@ function main() {
       '<div id="not-found-property-error">Error: cannot find this property</div>' +
       '<input id="pathToProperty"></input><button id="submitPathToProperty">Highlight</button><button id="clearPathToProperty">Clear</button>' +
       '<text class="text-white">      ----      </text>' +
-      '<button id="expandAll">Expand all</button>' +
       '<button id="collapseAll">Collapse all</button>' +
+      '<button id="expandAll">Expand all</button>' +
       '<div class="right">' +
         '<input id="preserveViewStateCheckbox" type="checkbox" checked></input><label for="preserveViewStateCheckbox">Preserve current view state</label>' +
       '</div>' +

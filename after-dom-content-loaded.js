@@ -33,6 +33,14 @@ function collapse(target) {
   parentNode.getElementsByClassName('collapser')[0].innerHTML = '+';
 }
 
+function collapseAll() {
+  var items = document.getElementsByClassName('collapsible');
+  // except the first one, '0' is the root
+  for (var i = 1; i < items.length; i++) {
+    collapse(items[i]);
+  }
+}
+
 function addCollapser(item) {
   var collapser = document.createElement('div');
   collapser.className = 'collapser';
@@ -74,16 +82,16 @@ document
 document
   .getElementById('collapseAll')
   .addEventListener('click', function() {
-    var items = document.getElementsByClassName('collapsible');
-    // except the first one, '0' is the root
-    for (var i = 1; i < items.length; i++) {
-      collapse(items[i]);
-    }
+    collapseAll();
   });
 
 const HIGHLIGHTED_CLASS_NAME = "highlighted";
 
-// JSON PROPERTY HIGHLIGHTING
+/**
+ * JSON PROPERTY HIGHLIGHTING
+ * =====================================
+ */
+
 function clearPathToProperty() {
   // clear the selected one
   var highlightedOnes = document.getElementsByClassName(HIGHLIGHTED_CLASS_NAME);
@@ -94,6 +102,7 @@ function clearPathToProperty() {
   // clear the error
   document.getElementById('not-found-property-error').style.display = 'none';
 }
+
 document
   .getElementById('clearPathToProperty')
   .addEventListener('click', function() {
@@ -131,9 +140,17 @@ document
     importantElement.className += ' ' + HIGHLIGHTED_CLASS_NAME;
   });
 
-// VIEW STATE PRESERVATION
+/**
+ *
+ * VIEW STATE PRESERVATION
+ * =====================================
+ */
+// initially collapse all
+collapseAll();
+
+
 // Read it from the storage
-chrome.storage.sync.get(['preserveViewState'], function(items) {
+chrome.storage.sync.get(['preserveViewState', 'states'], function(items) {
   var preserveViewStateCheckbox = document.getElementById('preserveViewStateCheckbox');
   if (items['preserveViewState']) {
     preserveViewStateCheckbox.checked = true;
@@ -142,10 +159,15 @@ chrome.storage.sync.get(['preserveViewState'], function(items) {
   }
 });
 
+function updateStates() {
+  var states = [];
+  
+}
+
 document
   .getElementById('preserveViewStateCheckbox')
   .addEventListener('change', function(event) {
-    chrome.storage.sync.set({'preserveViewState': event.target.checked});
+    chrome.storage.sync.set({'preserveViewState': event.target.checked, 'states': []});
     
-    
+        
   });
