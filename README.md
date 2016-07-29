@@ -8,8 +8,13 @@ NOTE: it contains many hacky & ugly looking codes, due to time pressure in hack 
 
 ===
 Follow these steps to install this extension to your Chrome:
+
 1) Go to "chrome://extensions/" on Chrome
+
 2) Click "Load unpacked extension..."
+
 3) Choose this directory
+
 4) Disable any other JSON extension you might have, since they might conflict with this one
+
 5) Then you are all set. Start using the extension by either dragging a json file into your Chrome, or going to a page that returns a json.
