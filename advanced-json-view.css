@@ -48,6 +48,10 @@ li:last-child:after {
   color: white;
 }
 
+#pathToProperty {
+  width: 400px;
+}
+
 #not-found-property-error, #parsing-json-error {
   display: none;
   -moz-border-radius: 8px;
