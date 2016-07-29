@@ -18,12 +18,15 @@ function main() {
   var controlsDiv =
     '<div class="controls">' +
       '<div id="not-found-property-error">Error: cannot find this property</div>' +
-      '<input id="pathToProperty"></input><button id="showPathToProperty">Highlight</button><button id="clearPathToProperty">Clear</button>' +
+      '<button id="showPathToProperty">Go to</button><input id="pathToProperty"></input>' +
+      '<button id="clearPathToProperty">Clear</button>' +
       '<text class="text-white">      ----      </text>' +
       '<button id="collapseAll">Collapse all</button>' +
       '<button id="expandAll">Expand all</button>' +
       '<div class="right">' +
-        '<input id="preserveViewStateCheckbox" type="checkbox" checked></input><label for="preserveViewStateCheckbox">Preserve current view state</label>' +
+          '<button id="saveViewStateButton" type="checkbox" checked>Preserve view state</button>' +
+          '----' +
+          '<input id="preserveViewStateCheckbox" type="checkbox" checked></input><label for="preserveViewStateCheckbox">Auto-preserve view state</label>' +
       '</div>' +
     '</div>';
   

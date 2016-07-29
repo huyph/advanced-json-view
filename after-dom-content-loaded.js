@@ -183,7 +183,9 @@ var allJsonProperties = document.getElementsByClassName('prop');
 
 for (var i = 0; i < allJsonProperties.length; i++) {
   allJsonProperties[i].addEventListener('click', function(event) {
-    updatePathToProperty(event.target.parentNode.id);
+    var propertyPath = event.target.parentNode.id;
+    updatePathToProperty(propertyPath);
+    updatePathPropertyInChromeStorage(propertyPath)
   });
 }
 
@@ -237,32 +239,45 @@ chrome.storage.sync.get(['preserveViewState', 'elementIds', 'pathToProperty'], f
   }
 });
 
+function saveViewState(save) {
+  preserveViewState = false;
+  elementIdsToSave = {};
+  pathToProperty = '';
+  
+  if (save) {
+    preserveViewState = true;
+    
+    var collapsibleElements = document.getElementsByClassName('collapsible');
+    var collapsibleElement;
+    
+    for (var i = 1; i < collapsibleElements.length; i++) {
+      collapsibleElement = collapsibleElements[i];
+      if (collapsibleElement.style.display !== 'none') {
+        elementIdsToSave[collapsibleElement.parentNode.id] = true;
+      }
+    }
+    
+    pathToProperty = document.getElementById('pathToProperty').value;
+  }
+  
+  chrome.storage.sync.set({
+    'preserveViewState': preserveViewState,
+    'elementIds': elementIdsToSave,
+    'pathToProperty': pathToProperty
+  });
+}
+
 document
   .getElementById('preserveViewStateCheckbox')
   .addEventListener('change', function(event) {
-    preserveViewState = false;
-    elementIdsToSave = {};
-    pathToProperty = '';
-    
-    if (event.target.checked) {
-      preserveViewState = true;
-      
-      var collapsibleElements = document.getElementsByClassName('collapsible');
-      var collapsibleElement;
+    saveViewState(event.target.checked);
+  });
+
+document
+  .getElementById('saveViewStateButton')
+  .addEventListener('click', function () {
+    saveViewState(true);
   
-      for (var i = 1; i < collapsibleElements.length; i++) {
-        collapsibleElement = collapsibleElements[i];
-        if (collapsibleElement.style.display !== 'none') {
-          elementIdsToSave[collapsibleElement.parentNode.id] = true;
-        }
-      }
-  
-      pathToProperty = document.getElementById('pathToProperty').value;
-    }
-  
-    chrome.storage.sync.set({
-      'preserveViewState': preserveViewState,
-      'elementIds': elementIdsToSave,
-      'pathToProperty': pathToProperty
-    });
+    document
+      .getElementById('preserveViewStateCheckbox').checked = true;
   });

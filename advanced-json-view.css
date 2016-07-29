@@ -72,6 +72,7 @@ li:last-child:after {
 }
 
 label[for=preserveViewStateCheckbox] {
+  font-size: small;
   color: white;
 }
 
