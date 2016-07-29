@@ -17,8 +17,9 @@ if (isJson()) {
 function main() {
   var controlsDiv =
     '<div class="controls">' +
-    '<label for="jsonPropertyFinder"></label><input id="jsonPropertyFinder"></input><button id="submitJsonPropertyFinder">Submit</button>' +
-    '<button id="expandAll">Expand all</button><button id="collapseAll">Collapse all</button>' +
+    '<input id="pathToProperty"></input><button id="submitPathToProperty">Submit</button>' +
+    '<button id="expandAll">Expand all</button>' +
+    '<button id="collapseAll">Collapse all</button>' +
     '</div>';
   
   document.body.innerHTML = controlsDiv + constructPrettifiedOutputOfJson();
@@ -42,15 +43,12 @@ function isJson() {
   this.uri = document.location.href;
   
   // Pre-process data step
-  
-  // Our manifest specifies that we only do URLs matching '.json', so attempt to sanitize any HTML
-  // added by Chrome's "text/plain" or "text/html" handlers
   if(/^\<pre.*\>(.*)\<\/pre\>$/.test(this.data)){
     log("data is wrapped in <pre>...</pre>, stripping HTML...");
     this.data = this.data.replace(/<(?:.|\s)*?>/g, ''); //Aggressively strip HTML.
   }
   
-  // Check data against regexs
+  // Check data against JSON regex
   var is_json = JSON_REGEX.test(this.data);
   var is_jsonp = JSONP_REGEX.test(this.data);
   log('is_json='+is_json+' is_jsonp='+is_jsonp);
@@ -191,7 +189,6 @@ function constructPrettifiedOutputOfJson() {
   this.jsonFormatter = new JSONFormatter();
   
   var outputDoc = '';
-  // text = text.match(JSONP_REGEX)[1];
   var cleanData = '',
     callback = '';
   
@@ -208,7 +205,6 @@ function constructPrettifiedOutputOfJson() {
   
   // Covert, and catch exceptions on failure
   try {
-    // var jsonObj = this.nativeJSON.decode(cleanData);
     var jsonObj = JSON.parse(cleanData);
     if ( jsonObj ) {
       outputDoc = this.jsonFormatter.jsonToHTML(jsonObj, callback, this.uri);

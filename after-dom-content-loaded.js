@@ -55,7 +55,7 @@ for( var i = 0; i < items.length; i++) {
 
 document
   .getElementById('expandAll')
-  .addEventListener('click', function(event) {
+  .addEventListener('click', function() {
     var items = document.getElementsByClassName('collapsible');
     for( var i = 0; i < items.length; i++) {
       if (items[i].style.display === 'none') {
@@ -66,9 +66,10 @@ document
 
 document
   .getElementById('collapseAll')
-  .addEventListener('click', function(event) {
+  .addEventListener('click', function() {
     var items = document.getElementsByClassName('collapsible');
-    for (var i = 0; i < items.length; i++) {
+    // except the first one, '0' is the root
+    for (var i = 1; i < items.length; i++) {
       if (items[i].style.display !== 'none') {
         collapse(items[i]);
       }
@@ -76,10 +77,17 @@ document
   });
 
 document
-  .getElementById('submitJsonPropertyFinder')
-  .addEventListener('click', function(event) {
-    var path = document.getElementById('jsonPropertyFinder').value.trim().split('.');
-    for (var i = 0; i < path.length; i++) {
+  .getElementById('submitPathToProperty')
+  .addEventListener('click', function() {
+    var path = document.getElementById('pathToProperty').value.trim().split('.');
+
+    var items = document.getElementsByClassName('collapsible');
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
       
+      // FIXME: throw an error if if property is not found
+      if (item.style.display === 'none' && path.indexOf(item.parentNode.childNodes[1].innerHTML) !== -1) {
+        expand(item);
+      }
     }
   });
