@@ -1,12 +1,32 @@
 {
   "manifest_version": 2,
-
   "name": "Advanced JSON View",
   "description": "This extension will pretty-print JSON data.",
   "version": "0.1",
 
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*.json*",
+        "https://*/*.json*",
+        "file:///*/*.json*"
+      ],
+      "js": [
+        "advanced-json-view.js",
+        "default.js"
+      ]
+    }
+  ],
+  "web_accessible_resources": [
+    "advanced-json-view.css"
+  ],
+
+  "permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+
   "browser_action": {
-    "default_icon": "FB_RGB_Small.jpg",
-    "default_popup": "popup.html"
+    "default_popup": "popup/popup.html"
   }
 }
