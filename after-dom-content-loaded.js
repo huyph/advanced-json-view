@@ -3,6 +3,11 @@ function isRootObject(item) {
 }
 
 function expand(target) {
+  // already collapsed
+  if ( target.style.display !== 'none' ) {
+    return;
+  }
+  
   var parentNode = target.parentNode;
   var ellipsis = parentNode.getElementsByClassName('ellipsis')[0];
   
@@ -12,6 +17,10 @@ function expand(target) {
 }
 
 function collapse(target) {
+  // already collapsed
+  if ( target.style.display === 'none' ) {
+    return;
+  }
   var ellipsis = document.createElement('span');
   var parentNode = target.parentNode;
   
@@ -58,9 +67,7 @@ document
   .addEventListener('click', function() {
     var items = document.getElementsByClassName('collapsible');
     for( var i = 0; i < items.length; i++) {
-      if (items[i].style.display === 'none') {
-        expand(items[i]);
-      }
+      expand(items[i]);
     }
   });
 
@@ -70,36 +77,39 @@ document
     var items = document.getElementsByClassName('collapsible');
     // except the first one, '0' is the root
     for (var i = 1; i < items.length; i++) {
-      if (items[i].style.display !== 'none') {
-        collapse(items[i]);
-      }
+      collapse(items[i]);
     }
   });
 
-// const SELECTED_CLASS_NAME = "selected";
+const HIGHLIGHTED_CLASS_NAME = "highlighted";
 
 document
   .getElementById('submitPathToProperty')
   .addEventListener('click', function() {
-    var path = document.getElementById('pathToProperty').value.trim().split('.');
+    // clear the selected one
+    var highlightedOnes = document.getElementsByClassName(HIGHLIGHTED_CLASS_NAME);
+    
+    // in practice, there is only one
+    for (var j = 0; j < highlightedOnes.length; j++) {
+      highlightedOnes[j].className = '';
+    }
 
-    var items = document.getElementsByClassName('collapsible');
-    for (var i = 0; i < items.length; i++) {
-      var item = items[i];
+    var path = document.getElementById('pathToProperty').value.trim().split('.');
+    
+    var tempPath = '';
+    for (var i = 0; i < path.length; i++) {
+      tempPath += (i === 0? '': '.') + path[i];
       
-      // FIXME: throw an error if if property is not found
-      var tempIndex = path.indexOf(item.parentNode.childNodes[1].innerHTML);
-      
-      if (tempIndex > -1) {
-        if (item.style.display === 'none') {
-          expand(item);
-        }
-        //
-        // if (tempIndex === path.length - 1) {
-        //   item.parentNode.className += " " + SELECTED_CLASS_NAME;
-        // }
+      var foundElement =  document.getElementById(tempPath);
+      if (foundElement) {
+        expand(document.getElementById(tempPath).lastElementChild);
+      } else {
+        // FIXME: print error
       }
     }
+    
+    // highlight
+    document.getElementById(tempPath).className += ' ' + HIGHLIGHTED_CLASS_NAME;
   });
 
 

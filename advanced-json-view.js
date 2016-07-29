@@ -17,9 +17,10 @@ if (isJson()) {
 function main() {
   var controlsDiv =
     '<div class="controls">' +
-    '<input id="pathToProperty"></input><button id="submitPathToProperty">Submit</button>' +
-    '<button id="expandAll">Expand all</button>' +
-    '<button id="collapseAll">Collapse all</button>' +
+      '<input id="pathToProperty"></input><button id="submitPathToProperty">Show me</button>' +
+      '<text class="text-white">      or      </text>' +
+      '<button id="expandAll">Expand all</button>' +
+      '<button id="collapseAll">Collapse all</button>' +
       '<div class="right">' +
         '<input id="preserveViewStateCheckbox" type="checkbox" checked></input><label for="preserveViewStateCheckbox">Preserve current view state</label>' +
       '</div>' +
@@ -64,8 +65,7 @@ function isJson() {
  */
 function constructPrettifiedOutputOfJson() {
   /**
-   * @modifiedBy Huy Pham (@Funnelback)
-   * @author Firefox JSONView (http://code.google.com/p/jsonview)
+   * Extended version of Firefox JSONView (http://code.google.com/p/jsonview)
    * @constructor
    */
   function JSONFormatter() {}
@@ -78,8 +78,12 @@ function constructPrettifiedOutputOfJson() {
       return '<span class="' + className + '">' + this.htmlEncode(value) + '</span>';
     },
     
+    getPath: function (parentPath, prop) {
+      return (parentPath === ''? prop: parentPath + "." + prop);
+    },
+    
     // Convert a basic JSON datatype (number, string, boolean, null, object, array) into an HTML fragment.
-    valueToHTML: function(value) {
+    valueToHTML: function(value, parentPath) {
       var valueType = typeof value;
       
       var output = "";
@@ -87,13 +91,13 @@ function constructPrettifiedOutputOfJson() {
         output += this.decorateWithSpan('null', 'null');
       }
       else if (value && value.constructor == Array) {
-        output += this.arrayToHTML(value);
+        output += this.arrayToHTML(value, parentPath);
       }
       else if (valueType == 'object') {
-        output += this.objectToHTML(value);
+        output += this.objectToHTML(value, parentPath);
       }
       else if (valueType == 'number') {
-        output += this.decorateWithSpan(value, 'num');
+        output += this.decorateWithSpan(value, 'num', parentPath);
       }
       else if (valueType == 'string') {
         if (/^(http|https):\/\/[^\s]+$/.test(value)) {
@@ -111,13 +115,15 @@ function constructPrettifiedOutputOfJson() {
     },
     
     // Convert an array into an HTML fragment
-    arrayToHTML: function(json) {
+    arrayToHTML: function(json, parentPath) {
       var output = '[<ul class="array collapsible">';
       var hasContents = false;
       for ( var prop in json ) {
+        var newParentPath = this.getPath(parentPath, prop);
+        
         hasContents = true;
-        output += '<li>';
-        output += this.valueToHTML(json[prop]);
+        output += '<li id="' + newParentPath + '">';
+        output += this.valueToHTML(json[prop], newParentPath);
         output += '</li>';
       }
       output += '</ul>]';
@@ -130,14 +136,16 @@ function constructPrettifiedOutputOfJson() {
     },
     
     // Convert a JSON object to an HTML fragment
-    objectToHTML: function(json) {
+    objectToHTML: function(json, parentPath) {
       var output = '{<ul class="obj collapsible">';
       var hasContents = false;
       for ( var prop in json ) {
+        var newParentPath = this.getPath(parentPath, prop);
+  
         hasContents = true;
-        output += '<li>';
+        output += '<li id="' + newParentPath + '">';
         output += '<span class="prop">' + this.htmlEncode(prop) + '</span>: ';
-        output += this.valueToHTML(json[prop]);
+        output += this.valueToHTML(json[prop], newParentPath);
         output += '</li>';
       }
       output += '</ul>}';
@@ -158,7 +166,7 @@ function constructPrettifiedOutputOfJson() {
       }else{
         output += '<div id="json">';
       }
-      output += this.valueToHTML(json);
+      output += this.valueToHTML(json, '');
       output += '</div>';
       if( callback ){
         output += '<div class="callback">)</div>';
@@ -168,9 +176,7 @@ function constructPrettifiedOutputOfJson() {
     
     // Produce an error document for when parsing fails.
     errorPage: function(error, data, uri) {
-      // var output = '<div id="error">' + this.stringbundle.GetStringFromName('errorParsing') + '</div>';
-      // output += '<h1>' + this.stringbundle.GetStringFromName('docContents') + ':</h1>';
-      var output = '<div id="error">Error parsing JSON: '+error.message+'</div>';
+      var output = '<div id="parsing-json-error">Error parsing JSON: '+error.message+'</div>';
       output += '<h1>'+error.stack+':</h1>';
       output += '<div id="json">' + this.htmlEncode(data) + '</div>';
       return this.toHTML(output, uri + ' - Error');
