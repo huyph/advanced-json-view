@@ -136,12 +136,17 @@ document
     updatePathPropertyInChromeStorage(pathToProperty);
   });
 
-function updatePathToProperty(newValue) {
+function updatePathToProperty(newValue, scrollTo) {
   document.getElementById('pathToProperty').value = newValue;
-  showPathToPropertyClicked();
+  
+  if (scrollTo) {
+    scrollToProperty();
+  } else {
+    highlightProperty();
+  }
 }
 
-function showPathToPropertyClicked() {
+function highlightProperty() {
   clearPathToProperty();
   
   var str = document.getElementById('pathToProperty').value.trim();
@@ -166,12 +171,18 @@ function showPathToPropertyClicked() {
   // highlight
   var importantElement = document.getElementById(tempPath);
   importantElement.className += ' ' + HIGHLIGHTED_CLASS_NAME;
+  return importantElement;
+}
+
+function scrollToProperty() {
+  var highlightedElement = highlightProperty();
+  highlightedElement.scrollIntoView();
 }
 
 document
   .getElementById('showPathToProperty')
   .addEventListener('click', function() {
-    showPathToPropertyClicked();
+    scrollToProperty();
   });
 
 /*
@@ -213,7 +224,7 @@ function updatePathPropertyInChromeStorage(value) {
   }
 }
 
-// Read it from the storage
+// Read view states from the storage
 chrome.storage.sync.get(['preserveViewState', 'elementIds', 'pathToProperty'], function(items) {
   var preserveViewStateCheckbox = document.getElementById('preserveViewStateCheckbox');
   if (items['preserveViewState']) {
@@ -232,7 +243,7 @@ chrome.storage.sync.get(['preserveViewState', 'elementIds', 'pathToProperty'], f
     }
     
     if (items['pathToProperty']) {
-      updatePathToProperty(items['pathToProperty']);
+      updatePathToProperty(items['pathToProperty'], true);
     }
   } else {
     preserveViewStateCheckbox.checked = false;
