@@ -15,9 +15,13 @@ if (isJson()) {
  * Only call this when the file is of type json
  */
 function main() {
-  document.body.innerHTML = '<label for="jsonPropertyFinder"></label><input id="jsonPropertyFinder"></input><button id="submitJsonPropertyFinder">Submit</button>' +
+  var controlsDiv =
+    '<div class="controls">' +
+    '<label for="jsonPropertyFinder"></label><input id="jsonPropertyFinder"></input><button id="submitJsonPropertyFinder">Submit</button>' +
     '<button id="expandAll">Expand all</button><button id="collapseAll">Collapse all</button>' +
-    constructPrettifiedOutputOfJson();
+    '</div>';
+  
+  document.body.innerHTML = controlsDiv + constructPrettifiedOutputOfJson();
 }
 
 /**
