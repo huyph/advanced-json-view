@@ -1,11 +1,12 @@
-// to save in browser's storage
+// Globals variables - There are saved in browser's storage
 // for view state memorisation
 var elementIdsToSave = {};
+var pathToProperty = '';
 
-function isRootObject(item) {
-  return ( item.nodeName != 'LI' );
-}
-
+/**
+ * EXPANDING and COLLAPSING ACTIONS
+ * =====================================
+ */
 function expand(target) {
   // already collapsed
   if ( target.style.display !== 'none' ) {
@@ -21,9 +22,9 @@ function expand(target) {
   parentNode.getElementsByClassName('collapser')[0].innerHTML = '-';
   
   // for view preservation functionality
-  if (isViewStatePreserved() && !elementIdsToSave[parentNode.id]) {
+  if (!elementIdsToSave[parentNode.id]) {
     elementIdsToSave[parentNode.id] = true;
-    updateElementIdsInChromeStorage();
+    updateElementIdsInChromeStorage(elementIdsToSave);
   }
 }
 
@@ -44,9 +45,9 @@ function collapse(target) {
   parentNode.getElementsByClassName('collapser')[0].innerHTML = '+';
   
   // for view preservation functionality
-  if (isViewStatePreserved() && elementIdsToSave.hasOwnProperty(parentNode.id) && elementIdsToSave[parentNode.id]) {
+  if (elementIdsToSave.hasOwnProperty(parentNode.id) && elementIdsToSave[parentNode.id]) {
     elementIdsToSave[parentNode.id] = undefined;
-    updateElementIdsInChromeStorage();
+    updateElementIdsInChromeStorage(elementIdsToSave);
   }
 }
 
@@ -129,32 +130,43 @@ document
   });
 
 document
-  .getElementById('submitPathToProperty')
-  .addEventListener('click', function() {
-    clearPathToProperty();
+  .getElementById('pathToProperty')
+  .addEventListener('change', function (event) {
+    pathToProperty = event.target.value;
+    updatePathPropertyInChromeStorage(pathToProperty);
+  });
 
-    var str = document.getElementById('pathToProperty').value.trim();
-    if (str === '') {
-      return;
+function showPathToPropertyClicked() {
+  clearPathToProperty();
+  
+  var str = document.getElementById('pathToProperty').value.trim();
+  if (str === '') {
+    return;
+  }
+  
+  var path = str.split('.');
+  
+  var tempPath = '';
+  for (var i = 0; i < path.length; i++) {
+    tempPath += (i === 0? '': '.') + path[i];
+    
+    var foundElement =  document.getElementById(tempPath);
+    if (foundElement) {
+      expand(foundElement.lastElementChild);
+    } else {
+      document.getElementById('not-found-property-error').style.display = 'block';
     }
-    
-    var path = str.split('.');
-    
-    var tempPath = '';
-    for (var i = 0; i < path.length; i++) {
-      tempPath += (i === 0? '': '.') + path[i];
-      
-      var foundElement =  document.getElementById(tempPath);
-      if (foundElement) {
-        expand(foundElement.lastElementChild);
-      } else {
-        document.getElementById('not-found-property-error').style.display = 'block';
-      }
-    }
-    
-    // highlight
-    var importantElement = document.getElementById(tempPath);
-    importantElement.className += ' ' + HIGHLIGHTED_CLASS_NAME;
+  }
+  
+  // highlight
+  var importantElement = document.getElementById(tempPath);
+  importantElement.className += ' ' + HIGHLIGHTED_CLASS_NAME;
+}
+
+document
+  .getElementById('showPathToProperty')
+  .addEventListener('click', function() {
+    showPathToPropertyClicked();
   });
 
 /**
@@ -169,11 +181,20 @@ function isViewStatePreserved() {
   return document.getElementById('preserveViewStateCheckbox').checked;
 }
 
-function updateElementIdsInChromeStorage() {
-  chrome.storage.sync.set({'elementIds': elementIdsToSave});
+function updateElementIdsInChromeStorage(value) {
+  if (isViewStatePreserved()) {
+    chrome.storage.sync.set({'elementIds': value});
+  }
 }
+
+function updatePathPropertyInChromeStorage(value) {
+  if (isViewStatePreserved()) {
+    chrome.storage.sync.set({'pathToProperty': value});
+  }
+}
+
 // Read it from the storage
-chrome.storage.sync.get(['preserveViewState', 'elementIds'], function(items) {
+chrome.storage.sync.get(['preserveViewState', 'elementIds', 'pathToProperty'], function(items) {
   var preserveViewStateCheckbox = document.getElementById('preserveViewStateCheckbox');
   if (items['preserveViewState']) {
     preserveViewStateCheckbox.checked = true;
@@ -189,6 +210,11 @@ chrome.storage.sync.get(['preserveViewState', 'elementIds'], function(items) {
         }
       }
     }
+    
+    if (items['pathToProperty']) {
+      document.getElementById('pathToProperty').value = items['pathToProperty'];
+      showPathToPropertyClicked();
+    }
   } else {
     preserveViewStateCheckbox.checked = false;
   }
@@ -198,6 +224,8 @@ document
   .getElementById('preserveViewStateCheckbox')
   .addEventListener('change', function(event) {
     elementIdsToSave = {};
+    pathToProperty = '';
+    
     if (event.target.checked) {
       var collapsibleElements = document.getElementsByClassName('collapsible');
       var collapsibleElement;
@@ -208,7 +236,13 @@ document
           elementIdsToSave[collapsibleElement.parentNode.id] = true;
         }
       }
+  
+      pathToProperty = document.getElementById('pathToProperty').value;
     }
   
-    chrome.storage.sync.set({'preserveViewState': event.target.checked, 'elementIds': elementIdsToSave});
+    chrome.storage.sync.set({
+      'preserveViewState': event.target.checked,
+      'elementIds': elementIdsToSave,
+      'pathToProperty': pathToProperty
+    });
   });

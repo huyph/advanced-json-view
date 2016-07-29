@@ -18,7 +18,7 @@ function main() {
   var controlsDiv =
     '<div class="controls">' +
       '<div id="not-found-property-error">Error: cannot find this property</div>' +
-      '<input id="pathToProperty"></input><button id="submitPathToProperty">Highlight</button><button id="clearPathToProperty">Clear</button>' +
+      '<input id="pathToProperty"></input><button id="showPathToProperty">Highlight</button><button id="clearPathToProperty">Clear</button>' +
       '<text class="text-white">      ----      </text>' +
       '<button id="collapseAll">Collapse all</button>' +
       '<button id="expandAll">Expand all</button>' +
