@@ -223,10 +223,13 @@ chrome.storage.sync.get(['preserveViewState', 'elementIds', 'pathToProperty'], f
 document
   .getElementById('preserveViewStateCheckbox')
   .addEventListener('change', function(event) {
+    preserveViewState = false;
     elementIdsToSave = {};
     pathToProperty = '';
     
     if (event.target.checked) {
+      preserveViewState = true;
+      
       var collapsibleElements = document.getElementsByClassName('collapsible');
       var collapsibleElement;
   
@@ -241,7 +244,7 @@ document
     }
   
     chrome.storage.sync.set({
-      'preserveViewState': event.target.checked,
+      'preserveViewState': preserveViewState,
       'elementIds': elementIdsToSave,
       'pathToProperty': pathToProperty
     });
