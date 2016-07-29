@@ -32,8 +32,8 @@ li {
   position: relative;
 }
 
-li .highlighted {
-  background-color: #e2e2e2;
+li.highlighted {
+  background-color: beige;
 }
 
 li:after {
