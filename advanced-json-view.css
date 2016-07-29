@@ -32,6 +32,10 @@ li {
   position: relative;
 }
 
+li .selected {
+  background-color: #e2e2e2;
+}
+
 li:after {
   content: ',';
 }

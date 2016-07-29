@@ -76,6 +76,8 @@ document
     }
   });
 
+// const SELECTED_CLASS_NAME = "selected";
+
 document
   .getElementById('submitPathToProperty')
   .addEventListener('click', function() {
@@ -86,8 +88,16 @@ document
       var item = items[i];
       
       // FIXME: throw an error if if property is not found
-      if (item.style.display === 'none' && path.indexOf(item.parentNode.childNodes[1].innerHTML) !== -1) {
-        expand(item);
+      var tempIndex = path.indexOf(item.parentNode.childNodes[1].innerHTML);
+      
+      if (tempIndex > -1) {
+        if (item.style.display === 'none') {
+          expand(item);
+        }
+        //
+        // if (tempIndex === path.length - 1) {
+        //   item.parentNode.className += " " + SELECTED_CLASS_NAME;
+        // }
       }
     }
   });
