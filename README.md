@@ -1,4 +1,4 @@
-Author: Huy Pham (hpham@funnelback.com)
+Contact person: Huy Pham (hpham@funnelback.com)
 ====
 This extension will pretty-print JSON data.
 
