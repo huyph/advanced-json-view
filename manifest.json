@@ -20,8 +20,7 @@
     "advanced-json-view.css"
   ],
   "permissions": [
-    "http://*/*",
-    "https://*/*"
+    "storage"
   ],
   "icons": {
     "16": "icons/flb16.png",

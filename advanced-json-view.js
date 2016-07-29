@@ -20,6 +20,9 @@ function main() {
     '<input id="pathToProperty"></input><button id="submitPathToProperty">Submit</button>' +
     '<button id="expandAll">Expand all</button>' +
     '<button id="collapseAll">Collapse all</button>' +
+      '<div class="right">' +
+        '<input id="preserveViewStateCheckbox" type="checkbox" checked></input><label for="preserveViewStateCheckbox">Preserve current view state</label>' +
+      '</div>' +
     '</div>';
   
   document.body.innerHTML = controlsDiv + constructPrettifiedOutputOfJson();

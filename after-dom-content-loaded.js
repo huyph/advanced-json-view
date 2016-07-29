@@ -101,3 +101,23 @@ document
       }
     }
   });
+
+
+// VIEW STATE PRESERVATION
+// Read it from the storage
+chrome.storage.sync.get(['preserveViewState'], function(items) {
+  var preserveViewStateCheckbox = document.getElementById('preserveViewStateCheckbox');
+  if (items['preserveViewState']) {
+    preserveViewStateCheckbox.checked = true;
+  } else {
+    preserveViewStateCheckbox.checked = false;
+  }
+});
+
+document
+  .getElementById('preserveViewStateCheckbox')
+  .addEventListener('change', function(event) {
+    chrome.storage.sync.set({'preserveViewState': event.target.checked});
+    
+    
+  });
