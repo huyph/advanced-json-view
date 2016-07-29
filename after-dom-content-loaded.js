@@ -3,18 +3,25 @@ function isRootObject(item) {
 }
 
 function expand(target) {
-  var ellipsis = target.parentNode.getElementsByClassName('ellipsis')[0];
-  target.parentNode.removeChild(ellipsis);
+  var parentNode = target.parentNode;
+  var ellipsis = parentNode.getElementsByClassName('ellipsis')[0];
+  
   target.style.display = '';
+  parentNode.removeChild(ellipsis);
+  parentNode.getElementsByClassName('collapser')[0].innerHTML = '-';
 }
 
 function collapse(target) {
-  target.style.display = 'none';
-
   var ellipsis = document.createElement('span');
+  var parentNode = target.parentNode;
+  
+  target.style.display = 'none';
+  
   ellipsis.className = 'ellipsis';
   ellipsis.innerHTML = ' &hellip; ';
-  target.parentNode.insertBefore(ellipsis, target);
+  
+  parentNode.insertBefore(ellipsis, target);
+  parentNode.getElementsByClassName('collapser')[0].innerHTML = '+';
 }
 
 function addCollapser(item) {
@@ -37,8 +44,6 @@ function addCollapser(item) {
     } else {
       collapse(target);
     }
-  
-    collapser.innerHTML = ( collapser.innerHTML == '-' ) ? '+' : '-';
   }, false);
   item.insertBefore(collapser, item.firstChild);
 }
