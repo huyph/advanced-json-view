@@ -17,8 +17,9 @@ if (isJson()) {
 function main() {
   var controlsDiv =
     '<div class="controls">' +
-      '<input id="pathToProperty"></input><button id="submitPathToProperty">Show me</button>' +
-      '<text class="text-white">      or      </text>' +
+      '<div id="not-found-property-error">Error: cannot find this property</div>' +
+      '<input id="pathToProperty"></input><button id="submitPathToProperty">Highlight</button><button id="clearPathToProperty">Clear</button>' +
+      '<text class="text-white">      ----      </text>' +
       '<button id="expandAll">Expand all</button>' +
       '<button id="collapseAll">Collapse all</button>' +
       '<div class="right">' +

@@ -83,16 +83,29 @@ document
 
 const HIGHLIGHTED_CLASS_NAME = "highlighted";
 
+// JSON PROPERTY HIGHLIGHTING
+function clearPathToProperty() {
+  // clear the selected one
+  var highlightedOnes = document.getElementsByClassName(HIGHLIGHTED_CLASS_NAME);
+  for (var j = 0; j < highlightedOnes.length; j++) {
+    highlightedOnes[j].className = '';
+  }
+  
+  // clear the error
+  document.getElementById('not-found-property-error').style.display = 'none';
+}
+document
+  .getElementById('clearPathToProperty')
+  .addEventListener('click', function() {
+    clearPathToProperty();
+    
+    document.getElementById('pathToProperty').value = '';
+  });
+
 document
   .getElementById('submitPathToProperty')
   .addEventListener('click', function() {
-    // clear the selected one
-    var highlightedOnes = document.getElementsByClassName(HIGHLIGHTED_CLASS_NAME);
-    
-    // in practice, there is only one
-    for (var j = 0; j < highlightedOnes.length; j++) {
-      highlightedOnes[j].className = '';
-    }
+    clearPathToProperty();
 
     var path = document.getElementById('pathToProperty').value.trim().split('.');
     
@@ -102,16 +115,16 @@ document
       
       var foundElement =  document.getElementById(tempPath);
       if (foundElement) {
-        expand(document.getElementById(tempPath).lastElementChild);
+        expand(foundElement.lastElementChild);
       } else {
-        // FIXME: print error
+        document.getElementById('not-found-property-error').style.display = 'block';
       }
     }
     
     // highlight
-    document.getElementById(tempPath).className += ' ' + HIGHLIGHTED_CLASS_NAME;
+    var importantElement = document.getElementById(tempPath);
+    importantElement.className += ' ' + HIGHLIGHTED_CLASS_NAME;
   });
-
 
 // VIEW STATE PRESERVATION
 // Read it from the storage
