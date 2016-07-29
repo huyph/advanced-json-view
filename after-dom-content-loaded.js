@@ -1,3 +1,7 @@
+// to save in browser's storage
+// for view state memorisation
+var elementIdsToSave = {};
+
 function isRootObject(item) {
   return ( item.nodeName != 'LI' );
 }
@@ -9,11 +13,18 @@ function expand(target) {
   }
   
   var parentNode = target.parentNode;
+  
   var ellipsis = parentNode.getElementsByClassName('ellipsis')[0];
   
   target.style.display = '';
   parentNode.removeChild(ellipsis);
   parentNode.getElementsByClassName('collapser')[0].innerHTML = '-';
+  
+  // for view preservation functionality
+  if (isViewStatePreserved() && !elementIdsToSave[parentNode.id]) {
+    elementIdsToSave[parentNode.id] = true;
+    updateElementIdsInChromeStorage();
+  }
 }
 
 function collapse(target) {
@@ -31,6 +42,12 @@ function collapse(target) {
   
   parentNode.insertBefore(ellipsis, target);
   parentNode.getElementsByClassName('collapser')[0].innerHTML = '+';
+  
+  // for view preservation functionality
+  if (isViewStatePreserved() && elementIdsToSave.hasOwnProperty(parentNode.id) && elementIdsToSave[parentNode.id]) {
+    elementIdsToSave[parentNode.id] = undefined;
+    updateElementIdsInChromeStorage();
+  }
 }
 
 function collapseAll() {
@@ -145,29 +162,53 @@ document
  * VIEW STATE PRESERVATION
  * =====================================
  */
-// initially collapse all
+// initially collapse all, in case view state is preseved, this will boots up performance a bit
 collapseAll();
 
+function isViewStatePreserved() {
+  return document.getElementById('preserveViewStateCheckbox').checked;
+}
 
+function updateElementIdsInChromeStorage() {
+  chrome.storage.sync.set({'elementIds': elementIdsToSave});
+}
 // Read it from the storage
-chrome.storage.sync.get(['preserveViewState', 'states'], function(items) {
+chrome.storage.sync.get(['preserveViewState', 'elementIds'], function(items) {
   var preserveViewStateCheckbox = document.getElementById('preserveViewStateCheckbox');
   if (items['preserveViewState']) {
     preserveViewStateCheckbox.checked = true;
+    
+    var elementIds = items['elementIds'];
+    var foundElement;
+    
+    for (var elementId in elementIds) {
+      if (elementIds.hasOwnProperty(elementId) && elementId) {
+        foundElement =  document.getElementById(elementId);
+        if (foundElement) {
+          expand(foundElement.lastElementChild);
+        }
+      }
+    }
   } else {
     preserveViewStateCheckbox.checked = false;
   }
 });
 
-function updateStates() {
-  var states = [];
-  
-}
-
 document
   .getElementById('preserveViewStateCheckbox')
   .addEventListener('change', function(event) {
-    chrome.storage.sync.set({'preserveViewState': event.target.checked, 'states': []});
-    
-        
+    elementIdsToSave = {};
+    if (event.target.checked) {
+      var collapsibleElements = document.getElementsByClassName('collapsible');
+      var collapsibleElement;
+  
+      for (var i = 1; i < collapsibleElements.length; i++) {
+        collapsibleElement = collapsibleElements[i];
+        if (collapsibleElement.style.display !== 'none') {
+          elementIdsToSave[collapsibleElement.parentNode.id] = true;
+        }
+      }
+    }
+  
+    chrome.storage.sync.set({'preserveViewState': event.target.checked, 'elementIds': elementIdsToSave});
   });
