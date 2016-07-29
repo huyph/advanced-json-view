@@ -136,6 +136,11 @@ document
     updatePathPropertyInChromeStorage(pathToProperty);
   });
 
+function updatePathToProperty(newValue) {
+  document.getElementById('pathToProperty').value = newValue;
+  showPathToPropertyClicked();
+}
+
 function showPathToPropertyClicked() {
   clearPathToProperty();
   
@@ -168,6 +173,19 @@ document
   .addEventListener('click', function() {
     showPathToPropertyClicked();
   });
+
+/*
+ **
+ * PATH DETECTOR - FOR ANY SELECTED PROPERTY
+ * =====================================
+ */
+var allJsonProperties = document.getElementsByClassName('prop');
+
+for (var i = 0; i < allJsonProperties.length; i++) {
+  allJsonProperties[i].addEventListener('click', function(event) {
+    updatePathToProperty(event.target.parentNode.id);
+  });
+}
 
 /**
  *
@@ -212,8 +230,7 @@ chrome.storage.sync.get(['preserveViewState', 'elementIds', 'pathToProperty'], f
     }
     
     if (items['pathToProperty']) {
-      document.getElementById('pathToProperty').value = items['pathToProperty'];
-      showPathToPropertyClicked();
+      updatePathToProperty(items['pathToProperty']);
     }
   } else {
     preserveViewStateCheckbox.checked = false;
