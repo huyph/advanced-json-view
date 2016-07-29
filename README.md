@@ -1,4 +1,3 @@
-
 # Summary
 This extension will pretty-print JSON data.
 
@@ -20,7 +19,8 @@ Follow these steps to install this extension to your Chrome:
 # IMPORTANT NOTES: 
 It contains many hacky & ugly looking codes, due to time pressure in hack day. 
 And we prefer native JS (no external library) when it comes to browser extension, to improve performance.
-Can consider using SystemJS to modularise our codes better, to make easier to collaborate and more extensible
+Can consider using SystemJS to modularise our codes better, to make easier to collaborate and more extensible. But a use of any other libs 
+will need to considered carefully.
 
 # Contact person
 Huy Pham (hpham@funnelback.com)
