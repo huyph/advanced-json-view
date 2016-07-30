@@ -68,7 +68,7 @@ function isJson() {
  */
 function constructPrettifiedOutputOfJson() {
   /**
-   * Extended version of Firefox JSONView (http://code.google.com/p/jsonview)
+   * This class is extended from Firefox JSONView (https://github.com/bhollis/jsonview)
    * @constructor
    */
   function JSONFormatter() {}
