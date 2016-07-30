@@ -174,9 +174,18 @@ function highlightProperty() {
   return importantElement;
 }
 
+Element.prototype.documentOffsetTop = function () {
+  return this.offsetTop + ( this.offsetParent ? this.offsetParent.documentOffsetTop() : 0 );
+};
+
+function scrollToTheMiddleOfThePageWith(element) {
+  var top = element.documentOffsetTop() - ( window.innerHeight / 2 );
+  window.scrollTo( 0, top );
+}
+
 function scrollToProperty() {
   var highlightedElement = highlightProperty();
-  highlightedElement.scrollIntoView();
+  scrollToTheMiddleOfThePageWith(highlightedElement);
 }
 
 document
