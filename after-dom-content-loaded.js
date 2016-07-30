@@ -172,8 +172,12 @@ function highlightProperty() {
   
   // highlight
   var importantElement = document.getElementById(tempPath);
-  importantElement.className += ' ' + HIGHLIGHTED_CLASS_NAME;
-  return importantElement;
+  if (importantElement) {
+    importantElement.className += ' ' + HIGHLIGHTED_CLASS_NAME;
+    return importantElement;
+  } else {
+    return undefined;
+  }
 }
 
 Element.prototype.documentOffsetTop = function () {
@@ -181,8 +185,10 @@ Element.prototype.documentOffsetTop = function () {
 };
 
 function scrollToTheMiddleOfThePageWith(element) {
-  var top = element.documentOffsetTop() - ( window.innerHeight / 2 );
-  window.scrollTo( 0, top );
+  if (element) {
+    var top = element.documentOffsetTop() - ( window.innerHeight / 2 );
+    window.scrollTo( 0, top );
+  }
 }
 
 function scrollToProperty() {
