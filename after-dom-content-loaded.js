@@ -197,6 +197,15 @@ function scrollToProperty() {
 }
 
 document
+  .getElementById('pathToProperty')
+  .addEventListener('keypress', function (e) {
+    var key = e.which || e.keyCode;
+    if (key === 13) { // 13 is enter
+      scrollToProperty();
+    }
+  });
+
+document
   .getElementById('showPathToProperty')
   .addEventListener('click', function() {
     scrollToProperty();
