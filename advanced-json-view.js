@@ -25,7 +25,8 @@ function main() {
       '<button id="expandAll">Expand all</button>' +
       '<div class="right">' +
           '<input id="autoPreserveViewStateCheckbox" type="checkbox" checked></input><label for="autoPreserveViewStateCheckbox">Auto-preserve view state</label>' +
-      '</div>' +
+          '   <label for="autoPreserveViewStateCheckbox">(status: <span id="saveViewStateStatus"></span>)</label>' +
+    '</div>' +
     '</div>';
   
   document.body.innerHTML = controlsDiv + constructPrettifiedOutputOfJson();

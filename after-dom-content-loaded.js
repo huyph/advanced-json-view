@@ -218,6 +218,9 @@ for (var i = 0; i < allJsonProperties.length; i++) {
 // initially collapse all, in case view state is preseved, this will boots up performance a bit
 collapseAll();
 
+const UNSAVED_CHANGES_STATUS = 'Unsaved';
+const SAVED_CHANGES_STATUS = 'Saved';
+
 var viewStateChanged = {};
 function resetViewStateChangedFlag() {
   viewStateChanged = {
@@ -227,16 +230,18 @@ function resetViewStateChangedFlag() {
   };
 }
 
-function updateAutoPreserveViewState() {
-  viewStateChanged.autoPreserveViewState = true;
+function displayViewStateStatus(text) {
+  document.getElementById('saveViewStateStatus').innerHTML = text;
 }
 
 function updateElementIdsInBrowserStorage() {
   viewStateChanged.elementIds = true;
+  displayViewStateStatus(UNSAVED_CHANGES_STATUS);
 }
 
 function updatePathPropertyInBrowserStorage() {
   viewStateChanged.pathToProperty = true;
+  displayViewStateStatus(UNSAVED_CHANGES_STATUS);
 }
 
 // Read view states from the storage
@@ -262,8 +267,10 @@ chrome.storage.sync.get(['autoPreserveViewState', 'elementIds', 'pathToProperty'
     }
   
     saveViewStateIntervalID = createSaveViewStateIntervalTask();
+    displayViewStateStatus(SAVED_CHANGES_STATUS);
   } else {
     autoPreserveViewStateCheckbox.checked = false;
+    displayViewStateStatus(UNSAVED_CHANGES_STATUS);
   }
 });
 
@@ -273,6 +280,7 @@ function writeToBrowserStorage(autoPreserveViewState, elementIds, pathToProperty
     'elementIds': elementIds,
     'pathToProperty': pathToProperty
   }, function() {
+    displayViewStateStatus(SAVED_CHANGES_STATUS);
     log('Current view state is saved to browser storage.');
   });
 }
@@ -320,6 +328,7 @@ document
         chrome.storage.sync.set({
           'autoPreserveViewState': false
         }, function () {
+          displayViewStateStatus(UNSAVED_CHANGES_STATUS);
           log('Auto-preserve is off');
         });
       }, MIN_PERIOD_FOR_WRITE_OPERATIONS_IN_SECONDS * 1000);
