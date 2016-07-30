@@ -4,6 +4,7 @@ const ADVANCED_JSON_VIEW = 'AdvancedJSONView: ';
 const JSON_REGEX = /^\s*([\[\{].*[\}\]])\s*$/;
 const JSONP_REGEX = /^[\s\u200B\uFEFF]*([\w$\[\]\.]+)[\s\u200B\uFEFF]*\([\s\u200B\uFEFF]*([\[{][\s\S]*[\]}])[\s\u200B\uFEFF]*\);?[\s\u200B\uFEFF]*$/;
 
+var test = require('test');
 
 if (isJson()) {
   main();
@@ -197,7 +198,7 @@ function constructPrettifiedOutputOfJson() {
     }
   };
   
-  // Sanitize & output -- all magic from JSONView Firefox
+  // To sanitize and build the DOM
   this.jsonFormatter = new JSONFormatter();
   
   var outputDoc = '';
@@ -215,7 +216,6 @@ function constructPrettifiedOutputOfJson() {
   }
   log(cleanData);
   
-  // Covert, and catch exceptions on failure
   try {
     var jsonObj = JSON.parse(cleanData);
     if ( jsonObj ) {
