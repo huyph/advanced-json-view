@@ -129,6 +129,7 @@ document
     clearPathToProperty();
     
     document.getElementById('pathToProperty').value = '';
+    updatePathPropertyInBrowserStorage();
   });
 
 document
