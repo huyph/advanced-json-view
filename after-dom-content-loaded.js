@@ -1,7 +1,9 @@
 // Globals variables - There are saved in browser's storage
 // for view state memorisation
 var elementIdsToSave = {};
-var pathToProperty = '';
+
+// Min period that a write can be periodically run
+const MIN_PERIOD_FOR_WRITE_OPERATIONS_IN_SECONDS = 1 / (chrome.storage.MAX_WRITE_OPERATIONS_PER_MINUTE / 60) + 0.2;
 
 /**
  * EXPANDING and COLLAPSING ACTIONS
@@ -24,7 +26,7 @@ function expand(target) {
   // for view preservation functionality
   if (!elementIdsToSave[parentNode.id]) {
     elementIdsToSave[parentNode.id] = true;
-    updateElementIdsInChromeStorage(elementIdsToSave);
+    updateElementIdsInBrowserStorage();
   }
 }
 
@@ -47,7 +49,7 @@ function collapse(target) {
   // for view preservation functionality
   if (elementIdsToSave.hasOwnProperty(parentNode.id) && elementIdsToSave[parentNode.id]) {
     elementIdsToSave[parentNode.id] = undefined;
-    updateElementIdsInChromeStorage(elementIdsToSave);
+    updateElementIdsInBrowserStorage();
   }
 }
 
@@ -132,8 +134,7 @@ document
 document
   .getElementById('pathToProperty')
   .addEventListener('change', function (event) {
-    pathToProperty = event.target.value;
-    updatePathPropertyInChromeStorage(pathToProperty);
+    updatePathPropertyInBrowserStorage();
   });
 
 function updatePathToProperty(newValue, scrollTo) {
@@ -205,7 +206,7 @@ for (var i = 0; i < allJsonProperties.length; i++) {
   allJsonProperties[i].addEventListener('click', function(event) {
     var propertyPath = event.target.parentNode.id;
     updatePathToProperty(propertyPath);
-    updatePathPropertyInChromeStorage(propertyPath)
+    updatePathPropertyInBrowserStorage()
   });
 }
 
@@ -217,27 +218,32 @@ for (var i = 0; i < allJsonProperties.length; i++) {
 // initially collapse all, in case view state is preseved, this will boots up performance a bit
 collapseAll();
 
-function isViewStatePreserved() {
-  return document.getElementById('preserveViewStateCheckbox').checked;
+var viewStateChanged = {};
+function resetViewStateChangedFlag() {
+  viewStateChanged = {
+    'autoPreserveViewState': false,
+    'elementIds': false,
+    'pathToProperty': false
+  };
 }
 
-function updateElementIdsInChromeStorage(value) {
-  if (isViewStatePreserved()) {
-    chrome.storage.sync.set({'elementIds': value});
-  }
+function updateAutoPreserveViewState() {
+  viewStateChanged.autoPreserveViewState = true;
 }
 
-function updatePathPropertyInChromeStorage(value) {
-  if (isViewStatePreserved()) {
-    chrome.storage.sync.set({'pathToProperty': value});
-  }
+function updateElementIdsInBrowserStorage() {
+  viewStateChanged.elementIds = true;
+}
+
+function updatePathPropertyInBrowserStorage() {
+  viewStateChanged.pathToProperty = true;
 }
 
 // Read view states from the storage
-chrome.storage.sync.get(['preserveViewState', 'elementIds', 'pathToProperty'], function(items) {
-  var preserveViewStateCheckbox = document.getElementById('preserveViewStateCheckbox');
-  if (items['preserveViewState']) {
-    preserveViewStateCheckbox.checked = true;
+chrome.storage.sync.get(['autoPreserveViewState', 'elementIds', 'pathToProperty'], function(items) {
+  var autoPreserveViewStateCheckbox = document.getElementById('autoPreserveViewStateCheckbox');
+  if (items['autoPreserveViewState']) {
+    autoPreserveViewStateCheckbox.checked = true;
     
     var elementIds = items['elementIds'];
     var foundElement;
@@ -254,50 +260,68 @@ chrome.storage.sync.get(['preserveViewState', 'elementIds', 'pathToProperty'], f
     if (items['pathToProperty']) {
       updatePathToProperty(items['pathToProperty'], true);
     }
+  
+    saveViewStateIntervalID = createSaveViewStateIntervalTask();
   } else {
-    preserveViewStateCheckbox.checked = false;
+    autoPreserveViewStateCheckbox.checked = false;
   }
 });
 
-function saveViewState(save) {
-  preserveViewState = false;
-  elementIdsToSave = {};
-  pathToProperty = '';
-  
-  if (save) {
-    preserveViewState = true;
-    
-    var collapsibleElements = document.getElementsByClassName('collapsible');
-    var collapsibleElement;
-    
-    for (var i = 1; i < collapsibleElements.length; i++) {
-      collapsibleElement = collapsibleElements[i];
-      if (collapsibleElement.style.display !== 'none') {
-        elementIdsToSave[collapsibleElement.parentNode.id] = true;
-      }
-    }
-    
-    pathToProperty = document.getElementById('pathToProperty').value;
-  }
-  
+function writeToBrowserStorage(autoPreserveViewState, elementIds, pathToProperty) {
   chrome.storage.sync.set({
-    'preserveViewState': preserveViewState,
-    'elementIds': elementIdsToSave,
+    'autoPreserveViewState': autoPreserveViewState,
+    'elementIds': elementIds,
     'pathToProperty': pathToProperty
+  }, function() {
+    log('Current view state is saved to browser storage.');
   });
 }
 
-document
-  .getElementById('preserveViewStateCheckbox')
-  .addEventListener('change', function(event) {
-    saveViewState(event.target.checked);
-  });
+/**
+ * Save view state to browser storage
+ */
+function saveViewState() {
+  if (!viewStateChanged.elementIds && !viewStateChanged.pathToProperty) {
+    // nothing new to save
+    return;
+  }
+  
+  var pathToProperty = document.getElementById('pathToProperty').value;
+  writeToBrowserStorage(true, elementIdsToSave, pathToProperty);
+  
+  resetViewStateChangedFlag();
+}
+
+var saveViewStateIntervalID;
+
+/**
+ * @returns {number} - interval id
+ */
+function createSaveViewStateIntervalTask() {
+  return setInterval(saveViewState, MIN_PERIOD_FOR_WRITE_OPERATIONS_IN_SECONDS * 1000);
+}
 
 document
-  .getElementById('saveViewStateButton')
-  .addEventListener('click', function () {
-    saveViewState(true);
+  .getElementById('autoPreserveViewStateCheckbox')
+  .addEventListener('change', function(event) {
+    if (event.target.checked === true) {
+      // don't create another interval task if there is one already
+      if (!saveViewStateIntervalID) {
+        saveViewStateIntervalID = createSaveViewStateIntervalTask();
+      }
+    } else {
+      // cancel existing one
+      if (saveViewStateIntervalID) {
+        clearInterval(saveViewStateIntervalID);
+        saveViewStateIntervalID = undefined;
+      }
   
-    document
-      .getElementById('preserveViewStateCheckbox').checked = true;
+      setTimeout(function () {
+        chrome.storage.sync.set({
+          'autoPreserveViewState': false
+        }, function () {
+          log('Auto-preserve is off');
+        });
+      }, MIN_PERIOD_FOR_WRITE_OPERATIONS_IN_SECONDS * 1000);
+    }
   });

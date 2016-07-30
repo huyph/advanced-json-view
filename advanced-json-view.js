@@ -24,9 +24,7 @@ function main() {
       '<button id="collapseAll">Collapse all</button>' +
       '<button id="expandAll">Expand all</button>' +
       '<div class="right">' +
-          '<button id="saveViewStateButton" type="checkbox" checked>Preserve view state</button>' +
-          '----' +
-          '<input id="preserveViewStateCheckbox" type="checkbox" checked></input><label for="preserveViewStateCheckbox">Auto-preserve view state</label>' +
+          '<input id="autoPreserveViewStateCheckbox" type="checkbox" checked></input><label for="autoPreserveViewStateCheckbox">Auto-preserve view state</label>' +
       '</div>' +
     '</div>';
   
