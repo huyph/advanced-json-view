@@ -4,6 +4,7 @@ body {
 
 .prop {
   font-weight: bold;
+  cursor: pointer;
 }
 
 .null {
