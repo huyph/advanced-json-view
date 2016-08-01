@@ -4,7 +4,6 @@ const ADVANCED_JSON_VIEW = 'AdvancedJSONView: ';
 const JSON_REGEX = /^\s*([\[\{].*[\}\]])\s*$/;
 const JSONP_REGEX = /^[\s\u200B\uFEFF]*([\w$\[\]\.]+)[\s\u200B\uFEFF]*\([\s\u200B\uFEFF]*([\[{][\s\S]*[\]}])[\s\u200B\uFEFF]*\);?[\s\u200B\uFEFF]*$/;
 
-var test = require('test');
 
 if (isJson()) {
   main();
