@@ -18,5 +18,9 @@ Follow these steps to install this extension to your Chrome:
 
 6) Then you are all set. Start using the extension by either dragging a json file into your Chrome, or going to a page that returns a json.
 
+# Known issues: (that will be addressed soon)
+- Auto view preservation stops working after "Expand all" is chosen
+- Error message causes toolbar to overlay top of JSON file
+
 # License notes
 - This is a port of Ben Hollis's JSONView extension for Firefox: http://jsonview.com
