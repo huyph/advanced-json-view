@@ -23,4 +23,4 @@ Follow these steps to install this extension to your Chrome:
 - Error message causes toolbar to overlay top of JSON file
 
 # License notes
-- This is a port of Ben Hollis's JSONView extension for Firefox: http://jsonview.com
+- The codes that read JSON file are extended from Ben Hollis's JSONView extension for Firefox: http://jsonview.com
