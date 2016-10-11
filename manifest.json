@@ -22,11 +22,6 @@
   "permissions": [
     "storage"
   ],
-  "icons": {
-    "16": "icons/flb16.png",
-    "48": "icons/flb48.png",
-    "128": "icons/flb128.png"
-  },
   "browser_action": {
     "default_popup": "popup.html"
   }

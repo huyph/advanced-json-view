@@ -49,6 +49,8 @@ function isJson() {
   this.data = document.body.innerHTML;
   this.uri = document.location.href;
   
+  this.data = this.data.replace(/^\s+|\s+$/g,'').replace(/\n/g, '');
+
   // Pre-process data step
   if(/^\<pre.*\>(.*)\<\/pre\>$/.test(this.data)){
     log("data is wrapped in <pre>...</pre>, stripping HTML...");
