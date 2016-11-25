@@ -17,7 +17,7 @@ if (isJson()) {
 function main() {
   var controlsDiv =
     '<div class="controls">' +
-      '<div id="not-found-property-error">Error: cannot find this property</div>' +
+      '<div id="not-found-property-error">Error: This property does not exist. Please try again.</div>' +
       '<button id="showPathToProperty">Go to</button><input id="pathToProperty"></input>' +
       '<button id="clearPathToProperty">Clear</button>' +
       '<text class="text-white">      ----      </text>' +
